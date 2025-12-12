@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rishabh Hair Salon | Premium Grooming & Styling</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Manrope:wght@200;300;400;500;600&family=Cinzel:wght@400;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Markdown Parser -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+        :root {
+            --gold: #f4d03f;
+            --gold-light: #fef9e7;
+            --gold-dark: #d68910;
+            --accent-purple: #9b59b6;
+            --accent-pink: #e91e63;
+            --accent-blue: #3498db;
+
+            /* Dark Mode Defaults */
+            --bg-color: #0a0a0f;
+            --text-primary: #ffffff;
+            --text-secondary: #b8b8b8;
+            --glass-bg: rgba(15, 15, 25, 0.6);
+            --glass-border: rgba(244, 208, 63, 0.25);
+            --nav-bg: rgba(10, 10, 15, 0.95);
+            --overlay-color: rgba(10, 10, 15, 0.9);
+            --card-hover-bg: rgba(244, 208, 63, 0.12);
+            --chat-user-bg: rgba(244, 208, 63, 0.25);
+            --chat-ai-bg: rgba(255, 255, 255, 0.08);
+        }
+
+        .light-mode {
+            --bg-color: #fafafa;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(244, 208, 63, 0.4);
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --overlay-color: rgba(250, 250, 250, 0.9);
+            --card-hover-bg: rgba(244, 208, 63, 0.08);
+            --chat-user-bg: rgba(244, 208, 63, 0.2);
+            --chat-ai-bg: rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Manrope', sans-serif;
+            overflow-x: hidden;
+            margin: 0;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        h1,
+        h2,
+        h3,
+        .serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .cinzel {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* 3D Canvas */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Noise Texture for Premium Feel */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Vignette Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 20%, var(--overlay-color) 120%);
+            z-index: 0;
+            pointer-events: none;
+            transition: background 0.5s ease;
+        }
+
+        .text-gold {
+            color: var(--gold);
+        }
+
+        .text-gradient-gold {
+            background: linear-gradient(135deg, #f4d03f, #f39c12, #e67e22, #d35400, #f4d03f);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 300% auto;
+            animation: shine 4s linear infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                background-position: 0% center;
+            }
+
+            100% {
+                background-position: 200% center;
+            }
+        }
+
+        /* Animated Gradient Background */
+        .gradient-bg {
+            background: linear-gradient(135deg, rgba(244, 208, 63, 0.1), rgba(155, 89, 182, 0.1), rgba(233, 30, 99, 0.1));
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: var(--text-primary);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            border-color: var(--gold);
+            background: var(--card-hover-bg);
+            box-shadow: 0 20px 60px -15px rgba(244, 208, 63, 0.5);
+        }
+
+        /* Shimmer Effect on Cards */
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: 0.5s;
+        }
+
+        .glass-card:hover::before {
+            left: 100%;
+        }
+
+        /* Buttons */
+        .btn-gold {
+            background: linear-gradient(135deg, #f4d03f, #f39c12, #e67e22, #f4d03f);
+            background-size: 300% 100%;
+            color: #1a1a1a;
+            font-weight: 700;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            border: none;
+            animation: gradientMove 3s ease infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .btn-gold::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-gold:hover::before {
+            left: 100%;
+        }
+
+        .btn-gold:hover {
+            transform: scale(1.08) translateY(-2px);
+            box-shadow: 0 10px 40px rgba(244, 208, 63, 0.6);
+            letter-spacing: 0.08em;
+        }
+
+        .btn-outline {
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            background: transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn-outline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background: var(--gold);
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn-outline:hover::before {
+            width: 100%;
+        }
+
+        .btn-outline:hover {
+            color: white;
+            /* Contrast text on hover */
+        }
+
+        /* Fix for light mode hover text visibility if needed */
+        .light-mode .btn-outline:hover {
+            color: white;
+        }
+
+        /* Modal Styles */
+        .modal {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+            transform: scale(0.95);
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+
+        .modal-bg {
+            background-color: var(--glass-bg);
+            color: var(--text-primary);
+            backdrop-filter: blur(20px);
+        }
+
+        /* Navbar Glass */
+        .nav-glass {
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            transition: all 0.5s ease;
+        }
+
+        .nav-scrolled {
+            padding-top: 0px !important;
+            padding-bottom: 0px !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            color: var(--gold);
+            border: 1px solid transparent;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: rgba(212, 175, 55, 0.3);
+            transform: rotate(15deg);
+        }
+
+        /* Section Backgrounds */
+        .bg-section {
+            background-color: var(--glass-bg);
+        }
+
+        /* Scroll Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Chat Styles */
+        .chat-msg {
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .chat-user {
+            background-color: var(--chat-user-bg);
+            text-align: right;
+            border-bottom-right-radius: 2px;
+            margin-left: 20%;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .chat-ai {
+            background-color: var(--chat-ai-bg);
+            text-align: left;
+            border-bottom-left-radius: 2px;
+            margin-right: 10%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .light-mode .chat-ai {
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .typing-indicator::after {
+            content: '...';
+            animation: typing 1s infinite;
+        }
+
+        @keyframes typing {
+            0% {
+                content: '.';
+            }
+
+            33% {
+                content: '..';
+            }
+
+            66% {
+                content: '...';
+            }
+        }
+
+        /* Markdown Styles in Chat */
+        .chat-ai strong {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .chat-ai ul {
+            padding-left: 20px;
+            list-style-type: disc;
+            margin: 5px 0;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold);
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Glow Effect */
+        .glow-gold {
+            text-shadow: 0 0 10px rgba(244, 208, 63, 0.5),
+                0 0 20px rgba(244, 208, 63, 0.3),
+                0 0 30px rgba(244, 208, 63, 0.2);
+        }
+
+        /* Enhanced Hover Effects */
+        .hover-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(244, 208, 63, 0.3);
+        }
+
+        /* Gradient Text Animation */
+        @keyframes gradientText {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .text-animated-gradient {
+            background: linear-gradient(90deg, #f4d03f, #f39c12, #e67e22, #f4d03f);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientText 3s linear infinite;
+        }
+
+        /* Watermark Text */
+        .watermark {
+            position: absolute;
+            font-family: 'Cinzel', serif;
+            font-size: 10rem;
+            opacity: 0.04;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: -1;
+            background: linear-gradient(135deg, rgba(244, 208, 63, 0.1), rgba(155, 89, 182, 0.1));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Pulse Animation */
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .animate-pulse-slow {
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        /* Slide in animations */
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-in-right {
+            animation: slideInRight 0.5s ease-out;
+        }
+
+        .slide-in-left {
+            animation: slideInLeft 0.5s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Noise Texture Overlay -->
+    <div class="noise-overlay"></div>
+
+    <!-- 3D Scene Background -->
+    <div id="canvas-container"></div>
+    <div class="overlay"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 nav-glass transition-all duration-500 py-2" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 md:h-20">
+                <div class="flex-shrink-0 cursor-pointer group" onclick="window.scrollTo(0,0)">
+                    <h1
+                        class="text-2xl font-bold tracking-wider cinzel group-hover:text-gold transition-colors duration-300">
+                        RISHABH<span class="text-gold group-hover:text-white transition-colors duration-300"> HAIR
+                            SALON</span></h1>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#services"
+                        class="hover:text-gold transition-colors text-xs uppercase tracking-[0.2em] font-medium relative group">
+                        Services
+                        <span
+                            class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="#about"
+                        class="hover:text-gold transition-colors text-xs uppercase tracking-[0.2em] font-medium relative group">
+                        About
+                        <span
+                            class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="#gallery"
+                        class="hover:text-gold transition-colors text-xs uppercase tracking-[0.2em] font-medium relative group">
+                        Gallery
+                        <span
+                            class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+
+                    <!-- AI Consultant Button -->
+                    <button onclick="openAIModal()"
+                        class="flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-gold hover:text-white transition-all border border-gold/40 px-4 py-1.5 rounded-full hover:bg-gold/20 hover:border-gold animate-float">
+                        <i data-lucide="sparkles" class="w-3 h-3"></i> AI Stylist
+                    </button>
+
+                    <!-- Theme Toggle -->
+                    <button id="theme-btn-desktop" class="theme-toggle">
+                        <i data-lucide="sun" class="w-5 h-5 hidden dark-icon"></i>
+                        <i data-lucide="moon" class="w-5 h-5 block light-icon"></i>
+                    </button>
+
+                    <button onclick="openModal()"
+                        class="btn-gold px-8 py-2.5 rounded-sm text-xs uppercase tracking-widest shadow-lg">Book
+                        Now</button>
+                </div>
+
+                <div class="md:hidden flex items-center gap-4">
+                    <button onclick="openAIModal()" class="text-gold p-2 bg-gold/10 rounded-full">
+                        <i data-lucide="sparkles" class="w-5 h-5"></i>
+                    </button>
+                    <button id="theme-btn-mobile" class="theme-toggle">
+                        <i data-lucide="sun" class="w-5 h-5 hidden dark-icon"></i>
+                        <i data-lucide="moon" class="w-5 h-5 block light-icon"></i>
+                    </button>
+                    <button class="text-gold"><i data-lucide="menu"></i></button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center px-4 relative z-10 overflow-hidden">
+        <!-- Floating Watermark -->
+        <div class="watermark top-20 left-10 opacity-[0.05]">RISHABH</div>
+        <div class="watermark bottom-20 right-10 opacity-[0.05]">HAIR SALON</div>
+
+        <div class="text-center max-w-4xl relative">
+            <!-- Decorative Line -->
+            <div class="w-[1px] h-16 bg-gradient-to-b from-transparent to-gold mx-auto mb-6"></div>
+
+            <p class="text-gold uppercase tracking-[0.4em] text-xs md:text-sm mb-6 font-semibold animate-fade-in-up">✨
+                Premium Hair Salon Experience ✨</p>
+
+            <h1 class="text-5xl md:text-8xl font-bold mb-8 leading-tight">
+                Transform Your <br> <span class="text-gradient-gold italic serif">Look & Confidence</span>
+            </h1>
+
+            <p class="opacity-90 max-w-xl mx-auto mb-12 text-lg font-light leading-relaxed">
+                Experience world-class hair styling, precision cuts, and luxury grooming treatments. Where style meets
+                perfection, and every visit transforms you into your best self.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                <button onclick="openModal()"
+                    class="btn-gold px-10 py-4 text-sm tracking-widest uppercase shadow-2xl w-full sm:w-auto min-w-[200px]">Book
+                    Appointment</button>
+                <button onclick="openAIModal()"
+                    class="btn-outline px-10 py-4 text-sm tracking-widest uppercase flex items-center justify-center gap-2 w-full sm:w-auto min-w-[200px]">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i> Ask AI Stylist
+                </button>
+            </div>
+        </div>
+
+        <div class="absolute bottom-8 right-8 hidden md:block text-right animate-float" style="animation-duration: 8s;">
+            <p class="text-gold text-lg font-serif italic mb-1">Est. 2023</p>
+            <div class="w-full h-[1px] bg-gold/50 mb-2"></div>
+            <p class="opacity-80 text-xs tracking-widest uppercase font-semibold">📍 Kanka Main Road, Jawad</p>
+            <p class="opacity-80 text-xs tracking-widest uppercase font-semibold">Neemuch, Madhya Pradesh</p>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 opacity-60">
+            <span class="text-[10px] uppercase tracking-widest">Scroll</span>
+            <div class="w-[1px] h-10 bg-gold/50"></div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-32 relative z-10 bg-section overflow-hidden">
+        <div class="watermark top-10 left-[-10%]">RISHABH HAIR SALON</div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20 reveal">
+                <h2 class="text-4xl md:text-6xl font-bold mb-4 cinzel">Our Signature <span
+                        class="text-gradient-gold">Services</span></h2>
+                <div class="flex items-center justify-center gap-4 mb-6">
+                    <div class="w-16 h-[1px] bg-gradient-to-r from-transparent via-gold to-transparent"></div>
+                    <div class="w-3 h-3 rotate-45 border-2 border-gold bg-gold/20"></div>
+                    <div class="w-16 h-[1px] bg-gradient-to-r from-transparent via-gold to-transparent"></div>
+                </div>
+                <p class="opacity-70 text-sm uppercase tracking-widest">Premium Hair Care & Styling</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div class="glass-card p-10 text-center group reveal delay-100 gradient-bg hover-lift">
+                    <div
+                        class="w-24 h-24 rounded-full border-2 border-gold/40 flex items-center justify-center mx-auto mb-8 group-hover:scale-125 group-hover:rotate-12 transition-all duration-500 bg-gradient-to-br from-gold/20 to-gold/5 shadow-lg shadow-gold/20">
+                        <i data-lucide="scissors"
+                            class="w-10 h-10 text-gold group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 serif group-hover:text-gold transition-colors glow-gold">
+                        Precision Haircut</h3>
+                    <p class="opacity-80 text-sm mb-6 leading-relaxed">Expert consultation followed by a tailored cut
+                        that suits your face shape and lifestyle.</p>
+                    <p class="text-gold font-serif text-2xl italic font-bold animate-pulse-slow">₹500</p>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="glass-card p-10 text-center group reveal delay-200 gradient-bg hover-lift">
+                    <div
+                        class="w-24 h-24 rounded-full border-2 border-gold/40 flex items-center justify-center mx-auto mb-8 group-hover:scale-125 group-hover:rotate-12 transition-all duration-500 bg-gradient-to-br from-gold/20 to-gold/5 shadow-lg shadow-gold/20">
+                        <i data-lucide="sparkles"
+                            class="w-10 h-10 text-gold group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 serif group-hover:text-gold transition-colors glow-gold">Luxury
+                        Facial</h3>
+                    <p class="opacity-80 text-sm mb-6 leading-relaxed">Rejuvenating multi-step skin treatments using
+                        premium organic products.</p>
+                    <p class="text-gold font-serif text-2xl italic font-bold animate-pulse-slow">₹800</p>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="glass-card p-10 text-center group reveal delay-300 gradient-bg hover-lift">
+                    <div
+                        class="w-24 h-24 rounded-full border-2 border-gold/40 flex items-center justify-center mx-auto mb-8 group-hover:scale-125 group-hover:rotate-12 transition-all duration-500 bg-gradient-to-br from-gold/20 to-gold/5 shadow-lg shadow-gold/20">
+                        <i data-lucide="zap" class="w-10 h-10 text-gold group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 serif group-hover:text-gold transition-colors glow-gold">Beard
+                        Sculpting</h3>
+                    <p class="opacity-80 text-sm mb-6 leading-relaxed">Hot towel shaves, oil treatment, and precise
+                        beard trimming for the gentleman.</p>
+                    <p class="text-gold font-serif text-2xl italic font-bold animate-pulse-slow">₹400</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Info Section -->
+    <section id="about" class="py-32 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <!-- Image Grid -->
+                <div class="grid grid-cols-2 gap-4 reveal">
+                    <div
+                        class="glass-card p-2 rounded-none border-none col-span-2 md:col-span-1 shadow-2xl relative group">
+                        <div class="absolute -top-4 -left-4 w-20 h-20 border-t-2 border-l-2 border-gold opacity-50">
+                        </div>
+                        <div
+                            class="h-[450px] w-full bg-neutral-900 relative overflow-hidden flex items-center justify-center">
+                            <div
+                                class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80')] bg-cover bg-center opacity-80 group-hover:scale-110 transition-transform duration-1000">
+                            </div>
+                            <div
+                                class="relative z-10 border border-gold/40 p-6 m-4 h-[90%] w-[90%] flex flex-col justify-center items-center text-center backdrop-blur-sm bg-black/30">
+                                <h3 class="text-3xl font-serif text-white mb-2 italic">The Master</h3>
+                                <div class="w-10 h-[1px] bg-gold mb-2"></div>
+                                <p class="text-gold uppercase tracking-widest text-xs font-bold">Rishabh Hair Salon</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-rows-2 gap-4 col-span-2 md:col-span-1">
+                        <div class="glass-card p-2 rounded-none border-none h-[215px] shadow-lg group">
+                            <div class="h-full w-full bg-neutral-900 relative overflow-hidden">
+                                <div
+                                    class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1503951914875-452162b7f3d1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80')] bg-cover bg-center opacity-80 group-hover:scale-110 transition-transform duration-1000">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glass-card p-2 rounded-none border-none h-[215px] shadow-lg group relative">
+                            <div
+                                class="absolute -bottom-4 -right-4 w-12 h-12 border-b-2 border-r-2 border-gold opacity-50">
+                            </div>
+                            <div class="h-full w-full bg-neutral-900 relative overflow-hidden">
+                                <div
+                                    class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80')] bg-cover bg-center opacity-80 group-hover:scale-110 transition-transform duration-1000">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="reveal delay-200">
+                    <p class="text-gold uppercase tracking-[0.2em] text-sm mb-4 font-bold flex items-center gap-3">
+                        <span class="w-8 h-[1px] bg-gold"></span> About Us
+                    </p>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-8 cinzel">More Than Just a Cut. <br> <span
+                            class="text-gradient-gold italic serif">It's a Transformation.</span></h2>
+                    <p class="opacity-90 mb-8 leading-relaxed text-lg font-light">
+                        At Rishabh Hair Salon, we believe grooming is an art form. Founded in 2023, our establishment
+                        combines traditional barbering techniques with modern aesthetics to create an environment where
+                        you can relax, recharge, and reinvent yourself. Every cut tells a story, every style reflects
+                        your personality.
+                    </p>
+                    <ul class="space-y-6 mb-10">
+                        <li class="flex items-center gap-4 opacity-90 group">
+                            <div
+                                class="w-8 h-8 rounded-full border border-gold/30 flex items-center justify-center group-hover:bg-gold group-hover:text-black transition-colors text-gold">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-lg">Private VIP Suites</span>
+                        </li>
+                        <li class="flex items-center gap-4 opacity-90 group">
+                            <div
+                                class="w-8 h-8 rounded-full border border-gold/30 flex items-center justify-center group-hover:bg-gold group-hover:text-black transition-colors text-gold">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-lg">Complimentary Beverages</span>
+                        </li>
+                        <li class="flex items-center gap-4 opacity-90 group">
+                            <div
+                                class="w-8 h-8 rounded-full border border-gold/30 flex items-center justify-center group-hover:bg-gold group-hover:text-black transition-colors text-gold">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-lg">Premium Grooming Products</span>
+                        </li>
+                    </ul>
+                    <a href="#gallery"
+                        class="text-gold hover:text-white transition-colors border-b border-gold pb-1 inline-block font-medium uppercase tracking-widest text-sm hover:pr-4 duration-300">View
+                        Our Gallery &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="py-32 relative z-10 bg-section overflow-hidden">
+        <div class="watermark bottom-0 right-0">PREMIUM STYLING</div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20 reveal">
+                <h2 class="text-4xl md:text-6xl font-bold mb-4 cinzel">Our <span
+                        class="text-gradient-gold">Gallery</span></h2>
+                <div class="flex items-center justify-center gap-4 mb-6">
+                    <div class="w-16 h-[1px] bg-gradient-to-r from-transparent via-gold to-transparent"></div>
+                    <div class="w-3 h-3 rotate-45 border-2 border-gold bg-gold/20"></div>
+                    <div class="w-16 h-[1px] bg-gradient-to-r from-transparent via-gold to-transparent"></div>
+                </div>
+                <p class="opacity-70 text-sm uppercase tracking-widest">See Our Work</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Gallery Item Loop -->
+                <script>
+                    const galleryItems = [
+                        { img: 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80', title: 'Interior' },
+                        { img: 'https://images.unsplash.com/photo-1635273051937-93c458a28107?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80', title: 'Products' },
+                        { img: 'https://images.unsplash.com/photo-1512690459411-b9245aed614b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80', title: 'Grooming' },
+                        { img: 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80', title: 'Experience' },
+                        { img: 'https://images.unsplash.com/photo-1593702295094-aea22597af65?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80', title: 'Style' },
+                        { img: 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80', title: 'Craft' }
+                    ];
+
+                    document.write(galleryItems.map((item, index) => `
+                        <div class="glass-card p-2 rounded-none border-none h-80 reveal" style="transition-delay: ${index * 100}ms">
+                            <div class="h-full w-full bg-neutral-900 relative overflow-hidden group cursor-pointer">
+                                <div class="absolute inset-0 bg-[url('${item.img}')] bg-cover bg-center opacity-80 group-hover:scale-110 transition-transform duration-700"></div>
+                                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center backdrop-blur-[2px]">
+                                    <div class="w-12 h-12 rounded-full border border-gold flex items-center justify-center text-gold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                        <i data-lucide="plus" class="w-6 h-6"></i>
+                                    </div>
+                                    <p class="text-gold uppercase tracking-[0.3em] text-sm font-bold transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75">${item.title}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `).join(''));
+                </script>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="fixed inset-0 z-[100] flex items-center justify-center modal">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-md" onclick="closeModal()"></div>
+        <div
+            class="glass-card modal-bg p-10 w-full max-w-md relative z-10 shadow-2xl border border-gold/20 transform transition-all">
+            <button onclick="closeModal()"
+                class="absolute top-4 right-4 text-white/50 hover:text-gold transition-colors">
+                <i data-lucide="x"></i>
+            </button>
+
+            <div class="text-center mb-8">
+                <h3 class="text-3xl font-serif mb-2 cinzel">Book Your Visit</h3>
+                <div class="w-16 h-[1px] bg-gold mx-auto mb-2"></div>
+                <p class="opacity-60 text-sm">Select a date to begin your transformation.</p>
+            </div>
+
+            <form class="space-y-6">
+                <div>
+                    <label class="block text-xs uppercase tracking-wider opacity-70 mb-2 font-bold">Full Name</label>
+                    <input type="text"
+                        class="w-full bg-black/20 border border-gray-600/50 p-4 focus:border-gold outline-none transition-all placeholder-white/20 hover:border-gold/50"
+                        placeholder="e.g. Aryan Kapoor">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-wider opacity-70 mb-2 font-bold">Service</label>
+                    <select
+                        class="w-full bg-black/20 border border-gray-600/50 p-4 focus:border-gold outline-none transition-all hover:border-gold/50 appearance-none">
+                        <option>Precision Haircut</option>
+                        <option>Beard Sculpting</option>
+                        <option>Full Service Package</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-wider opacity-70 mb-2 font-bold">Date</label>
+                    <input type="date"
+                        class="w-full bg-black/20 border border-gray-600/50 p-4 focus:border-gold outline-none transition-all hover:border-gold/50 text-white/80">
+                </div>
+                <button type="button"
+                    class="btn-gold w-full py-4 mt-6 uppercase tracking-[0.2em] text-sm font-bold shadow-lg hover:shadow-gold/20">Confirm
+                    Booking</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- AI Consultant Modal -->
+    <div id="aiModal" class="fixed inset-0 z-[100] flex items-center justify-center modal">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-md" onclick="closeAIModal()"></div>
+        <div
+            class="glass-card modal-bg w-full max-w-lg h-[650px] relative z-10 shadow-2xl border border-gold/20 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <div class="p-6 border-b border-gray-700/50 flex justify-between items-center bg-gold/5 backdrop-blur-xl">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-12 h-12 rounded-full bg-gradient-to-br from-gold/80 to-gold-dark flex items-center justify-center text-black shadow-lg shadow-gold/20">
+                        <i data-lucide="sparkles" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-serif font-bold tracking-wide">AI Stylist</h3>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                            <p class="text-[10px] opacity-60 uppercase tracking-widest">Online • Gemini Powered</p>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="closeAIModal()"
+                    class="hover:text-gold transition-colors bg-white/5 p-2 rounded-full hover:bg-white/10">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Chat Area -->
+            <div id="chat-box" class="flex-1 p-6 overflow-y-auto space-y-6 bg-black/10">
+                <div class="chat-ai chat-msg animate-float" style="animation-duration: 4s;">
+                    <p>Namaste! 👋 I am Rishabh Hair Salon's personal AI Styling Assistant. How can I help transform
+                        your look today? Ask me about hairstyles, beard trims, or any grooming advice!
+                    </p>
+                </div>
+                <!-- Dynamic messages go here -->
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-5 border-t border-gray-700/50 bg-black/30 backdrop-blur-md">
+                <form id="ai-form" class="flex gap-3 relative" onsubmit="handleAIQuery(event)">
+                    <input type="text" id="ai-input"
+                        class="flex-1 bg-white/5 border border-white/10 rounded-full pl-6 pr-14 py-3 focus:border-gold outline-none transition-all focus:bg-white/10 placeholder-white/30"
+                        placeholder="Ask about hairstyles, beard trims..." required>
+                    <button type="submit" id="ai-send-btn"
+                        class="absolute right-2 top-1.5 btn-gold w-9 h-9 rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-none">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-section py-16 border-t border-gold/10 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold tracking-[0.2em] mb-6 cinzel">RISHABH<span class="text-gold"> HAIR
+                    SALON</span></h2>
+
+            <div class="flex justify-center gap-6 mb-10">
+                <a href="#"
+                    class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:border-gold hover:text-gold transition-all duration-300 hover:scale-110"><i
+                        data-lucide="instagram" class="w-5 h-5"></i></a>
+                <a href="#"
+                    class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:border-gold hover:text-gold transition-all duration-300 hover:scale-110"><i
+                        data-lucide="twitter" class="w-5 h-5"></i></a>
+                <a href="#"
+                    class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:border-gold hover:text-gold transition-all duration-300 hover:scale-110"><i
+                        data-lucide="linkedin" class="w-5 h-5"></i></a>
+            </div>
+
+            <div class="w-full h-[1px] bg-gradient-to-r from-transparent via-gold/30 to-transparent mb-8"></div>
+
+            <p class="opacity-40 text-xs tracking-widest uppercase">&copy; 2025 Rishabh Hair Salon. Crafted with
+                precision & passion.</p>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // ------------------------------------------------------------------
+        // UI INTERACTIONS
+        // ------------------------------------------------------------------
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('nav-scrolled');
+                nav.classList.add('py-0');
+                nav.classList.remove('py-2');
+            } else {
+                nav.classList.remove('nav-scrolled');
+                nav.classList.add('py-2');
+                nav.classList.remove('py-0');
+            }
+        });
+
+        // Scroll Reveal Animation
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Modal Logic
+        function openModal() {
+            document.getElementById('bookingModal').classList.add('active');
+        }
+        function closeModal() {
+            document.getElementById('bookingModal').classList.remove('active');
+        }
+
+        // AI Modal Logic
+        function openAIModal() {
+            document.getElementById('aiModal').classList.add('active');
+            setTimeout(() => {
+                document.getElementById('ai-input').focus();
+            }, 300);
+        }
+        function closeAIModal() {
+            document.getElementById('aiModal').classList.remove('active');
+        }
+
+        // ------------------------------------------------------------------
+        // GEMINI AI INTEGRATION
+        // ------------------------------------------------------------------
+        const apiKey = ""; // System will provide API key
+
+        async function handleAIQuery(event) {
+            event.preventDefault();
+            const inputEl = document.getElementById('ai-input');
+            const chatBox = document.getElementById('chat-box');
+            const userText = inputEl.value.trim();
+            const sendBtn = document.getElementById('ai-send-btn');
+
+            if (!userText) return;
+
+            // 1. Add User Message
+            const userMsgDiv = document.createElement('div');
+            userMsgDiv.className = 'chat-user chat-msg slide-in-right';
+            userMsgDiv.textContent = userText;
+            chatBox.appendChild(userMsgDiv);
+
+            // Scroll to bottom
+            chatBox.scrollTop = chatBox.scrollHeight;
+            inputEl.value = '';
+            inputEl.disabled = true;
+            sendBtn.disabled = true;
+            sendBtn.classList.add('opacity-50');
+
+            // 2. Add Loading Indicator
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'chat-ai chat-msg typing-indicator';
+            chatBox.appendChild(loadingDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                // 3. Call Gemini API
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `You are Rishabh Hair Salon's expert luxury hair stylist and grooming consultant.
+                            User Query: "${userText}"
+
+                            Your task:
+                            1. Give sophisticated, concise advice on hair/beard styles or skin care tailored to the user.
+                            2. Keep the tone premium, friendly, and professional (like a high-end salon owner).
+                            3. Use Markdown for formatting (bold, lists).
+                            4. If they ask to book, tell them to click the 'Book Now' button.
+                            5. Keep response under 100 words.
+                            6. Be enthusiastic and helpful about hair styling and grooming.` }]
+                        }]
+                    })
+                });
+
+                if (!response.ok) throw new Error('API Error');
+
+                const data = await response.json();
+                const aiResponseText = data.candidates[0].content.parts[0].text;
+
+                // 4. Remove Loader & Add AI Response
+                chatBox.removeChild(loadingDiv);
+
+                const aiMsgDiv = document.createElement('div');
+                aiMsgDiv.className = 'chat-ai chat-msg slide-in-left';
+                // Parse markdown
+                aiMsgDiv.innerHTML = marked.parse(aiResponseText);
+                chatBox.appendChild(aiMsgDiv);
+
+            } catch (error) {
+                console.error(error);
+                chatBox.removeChild(loadingDiv);
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'chat-ai chat-msg text-red-400';
+                errorDiv.textContent = "Apologies, I am currently attending to another client. Please try again in a moment.";
+                chatBox.appendChild(errorDiv);
+            } finally {
+                inputEl.disabled = false;
+                sendBtn.disabled = false;
+                sendBtn.classList.remove('opacity-50');
+                inputEl.focus();
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+
+        // ------------------------------------------------------------------
+        // THEME TOGGLE LOGIC
+        // ------------------------------------------------------------------
+        let isLightMode = false;
+        let update3DTheme = null;
+
+        const toggleTheme = () => {
+            isLightMode = !isLightMode;
+            document.body.classList.toggle('light-mode');
+
+            const darkIcons = document.querySelectorAll('.dark-icon');
+            const lightIcons = document.querySelectorAll('.light-icon');
+
+            if (isLightMode) {
+                darkIcons.forEach(el => el.style.display = 'block');
+                lightIcons.forEach(el => el.style.display = 'none');
+            } else {
+                darkIcons.forEach(el => el.style.display = 'none');
+                lightIcons.forEach(el => el.style.display = 'block');
+            }
+
+            if (update3DTheme) update3DTheme(isLightMode);
+        };
+
+        document.getElementById('theme-btn-desktop').addEventListener('click', toggleTheme);
+        document.getElementById('theme-btn-mobile').addEventListener('click', toggleTheme);
+
+
+        // ------------------------------------------------------------------
+        // THREE.JS - ULTIMATE LUXURY 3D
+        // ------------------------------------------------------------------
+        const initThreeJS = () => {
+            const container = document.getElementById('canvas-container');
+            const scene = new THREE.Scene();
+
+            // Fog - Will be updated by theme
+            scene.fog = new THREE.FogExp2(0x0a0a0f, 0.002);
+
+            // Camera
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 8;
+
+            // Renderer
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit pixel ratio for performance
+            container.appendChild(renderer.domElement);
+
+            // Group to hold our Pole
+            const poleGroup = new THREE.Group();
+            scene.add(poleGroup);
+
+            // 1. Pole Body (Cylinder) - Luxury Gold/White/Black Theme
+            const canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 512;
+            const context = canvas.getContext('2d');
+
+            // Draw Stripes
+            const drawStripes = () => {
+                const w = canvas.width;
+                const h = canvas.height;
+                const stripeHeight = h / 2;
+
+                // Clear
+                context.fillStyle = '#f8f8f8';
+                context.fillRect(0, 0, w, h);
+
+                // Gold Gradient Simulation on Canvas
+                const gradient = context.createLinearGradient(0, 0, w, 0);
+                gradient.addColorStop(0, '#f4d03f');
+                gradient.addColorStop(0.5, '#fef9e7');
+                gradient.addColorStop(1, '#d68910');
+
+                context.fillStyle = gradient;
+                context.fillRect(0, 0, w, stripeHeight);
+
+                // Black Pinstripe
+                context.fillStyle = '#0a0a0f';
+                context.fillRect(0, stripeHeight - 5, w, 10);
+            }
+
+            drawStripes();
+
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(1, 4);
+            texture.center.set(0.5, 0.5);
+            texture.rotation = Math.PI / 4;
+
+            // Enhanced Material
+            const geometry = new THREE.CylinderGeometry(1.5, 1.5, 8, 64);
+            const material = new THREE.MeshPhysicalMaterial({
+                map: texture,
+                clearcoat: 1.0,
+                clearcoatRoughness: 0.1,
+                metalness: 0.2,
+                roughness: 0.2,
+                reflectivity: 1
+            });
+            const pole = new THREE.Mesh(geometry, material);
+            poleGroup.add(pole);
+
+            // 2. Caps (Gold) - Enhanced Material
+            const capMat = new THREE.MeshStandardMaterial({
+                color: 0xf4d03f,
+                metalness: 1.0,
+                roughness: 0.15,
+                emissive: 0xd68910,
+                emissiveIntensity: 0.3
+            });
+
+            const topCap = new THREE.Mesh(new THREE.CylinderGeometry(1.8, 1.8, 0.5, 64), capMat);
+            topCap.position.y = 4.25;
+            poleGroup.add(topCap);
+
+            const topSphere = new THREE.Mesh(new THREE.SphereGeometry(1.5, 32, 32), capMat);
+            topSphere.position.y = 4.6;
+            poleGroup.add(topSphere);
+
+            const botCap = new THREE.Mesh(new THREE.CylinderGeometry(1.8, 1.8, 0.5, 64), capMat);
+            botCap.position.y = -4.25;
+            poleGroup.add(botCap);
+
+            const botSphere = new THREE.Mesh(new THREE.SphereGeometry(1.5, 32, 32), capMat);
+            botSphere.position.y = -4.6;
+            poleGroup.add(botSphere);
+
+            // 3. Gold Particles - Enhanced
+            const particlesCount = 1200;
+            const pGeo = new THREE.BufferGeometry();
+            const pPos = new Float32Array(particlesCount * 3);
+            const pScales = new Float32Array(particlesCount);
+
+            for (let i = 0; i < particlesCount; i++) {
+                pPos[i * 3] = (Math.random() - 0.5) * 40;
+                pPos[i * 3 + 1] = (Math.random() - 0.5) * 40;
+                pPos[i * 3 + 2] = (Math.random() - 0.5) * 40;
+                pScales[i] = Math.random();
+            }
+            pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+            pGeo.setAttribute('scale', new THREE.BufferAttribute(pScales, 1));
+
+            // Custom Shader for Twinkling Particles
+            const pMat = new THREE.PointsMaterial({
+                color: 0xf4d03f,
+                size: 0.12,
+                transparent: true,
+                opacity: 0.9,
+                blending: THREE.AdditiveBlending,
+                sizeAttenuation: true
+            });
+
+            const particleSystem = new THREE.Points(pGeo, pMat);
+            scene.add(particleSystem);
+
+            // Lighting - Dramatic Setup
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+            scene.add(ambientLight);
+
+            // Key Light
+            const spotLight = new THREE.SpotLight(0xfff0dd, 2);
+            spotLight.position.set(10, 10, 10);
+            spotLight.angle = 0.5;
+            spotLight.penumbra = 0.5;
+            scene.add(spotLight);
+
+            // Rim Light (Blueish for contrast)
+            const rimLight = new THREE.SpotLight(0x4455ff, 1);
+            rimLight.position.set(-10, 5, -5);
+            scene.add(rimLight);
+
+            // Gold Fill Light
+            const goldLight = new THREE.PointLight(0xf4d03f, 2.0, 20);
+            goldLight.position.set(-5, -5, 5);
+            scene.add(goldLight);
+
+            // THEME UPDATE FUNCTION
+            update3DTheme = (isLight) => {
+                if (isLight) {
+                    scene.fog.color.setHex(0xfafafa);
+                    pMat.color.setHex(0xd68910);
+                    ambientLight.intensity = 0.8;
+                    rimLight.intensity = 0.2;
+                } else {
+                    scene.fog.color.setHex(0x0a0a0f);
+                    pMat.color.setHex(0xf4d03f);
+                    ambientLight.intensity = 0.2;
+                    rimLight.intensity = 1;
+                }
+            };
+
+            // Initial Position Logic
+            const updatePositions = () => {
+                if (window.innerWidth > 768) {
+                    poleGroup.position.set(5.5, 0, 0);
+                    poleGroup.scale.set(1.1, 1.1, 1.1);
+                    poleGroup.rotation.z = -0.1;
+                } else {
+                    poleGroup.position.set(0, -1.5, -6);
+                    poleGroup.scale.set(0.8, 0.8, 0.8);
+                    poleGroup.rotation.z = Math.PI / 6;
+                }
+            };
+            updatePositions();
+
+            // Animation Loop
+            let time = 0;
+            let mouseX = 0;
+            let mouseY = 0;
+            const windowHalfX = window.innerWidth / 2;
+            const windowHalfY = window.innerHeight / 2;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX - windowHalfX) * 0.0005;
+                mouseY = (e.clientY - windowHalfY) * 0.0005;
+            });
+
+            const animate = () => {
+                requestAnimationFrame(animate);
+                time += 0.005;
+
+                // Animate Texture Offset for spinning effect
+                texture.offset.y -= 0.008;
+
+                // Gentle complex float of the pole
+                poleGroup.position.y += Math.sin(time * 2) * 0.003;
+                poleGroup.rotation.x = Math.sin(time) * 0.05;
+
+                // Mouse Parallax for Pole (Smooth lerp could be added here for better feel)
+                poleGroup.rotation.y = mouseX * 0.5;
+
+                // Particles Rotation & Pulse
+                particleSystem.rotation.y = time * 0.05;
+                const scales = particleSystem.geometry.attributes.scale.array;
+
+                // Twinkle effect logic (heavy on CPU, simplified here)
+                // We'll just rotate slightly
+                particleSystem.rotation.z = Math.sin(time * 0.5) * 0.1;
+
+                renderer.render(scene, camera);
+            };
+            animate();
+
+            // Resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                updatePositions();
+            });
+        };
+
+        document.addEventListener('DOMContentLoaded', initThreeJS);
+    </script>
+</body>
+
+</html>
