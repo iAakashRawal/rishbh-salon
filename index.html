@@ -13,10 +13,10 @@
 
         :root {
             --gold: #A6891B;
-            --light-bg: #f5f7fa; /* Slightly cooler background for the blue glass */
+            --light-bg: #f0f4f8; 
             --charcoal: #1A1A1A;
-            --glass-blue: rgba(224, 242, 254, 0.4);
-            --border-light: rgba(255, 255, 255, 0.6);
+            --glass-blue: rgba(224, 242, 254, 0.6);
+            --border-light: rgba(255, 255, 255, 0.8);
         }
 
         body {
@@ -25,19 +25,20 @@
             color: var(--charcoal);
             font-family: 'Plus Jakarta Sans', sans-serif;
             overflow-x: hidden;
-            font-size: 13px; /* Smaller base font */
+            font-size: 13px;
         }
 
         h1, h2, h3 { font-family: 'Playfair Display', serif; }
 
+        /* 3D Canvas on TOP */
         #bg-canvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1;
-            pointer-events: none;
+            z-index: 50; /* Higher than content to stay on top */
+            pointer-events: none; /* Crucial: lets you click the buttons underneath */
         }
 
         /* Layout Structure */
@@ -50,19 +51,19 @@
         .panel {
             min-height: 90vh;
             display: flex;
-            margin-bottom: 40px;
+            margin-bottom: 60px;
         }
 
         /* The Rounded Glass Section */
         .glass-panel {
             width: 100%;
             background: var(--glass-blue);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 40px; /* Highly rounded radius */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 50px; /* Highly rounded as requested */
             border: 1px solid var(--border-light);
             padding: 5vw;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
             display: flex;
             align-items: center;
         }
@@ -78,19 +79,19 @@
             position: fixed;
             bottom: 30px;
             right: 30px;
-            z-index: 100;
+            z-index: 100; /* Highest layer */
             background: #25D366;
-            width: 50px;
-            height: 50px;
+            width: 55px;
+            height: 55px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.2);
-            transition: transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(37, 211, 102, 0.3);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .wa-fab:hover { transform: translateY(-5px) scale(1.05); }
+        .wa-fab:hover { transform: translateY(-5px) scale(1.1); }
 
         .sizer-option {
             border-bottom: 1px solid rgba(0,0,0,0.05);
@@ -100,9 +101,10 @@
         }
 
         .sizer-option.active {
-            padding-left: 10px;
+            padding-left: 15px;
             border-color: var(--gold);
             color: var(--gold);
+            font-weight: bold;
         }
 
         .vertical-text {
@@ -115,10 +117,10 @@
             position: fixed;
             left: 20px;
             top: 0;
-            width: 1px;
+            width: 2px;
             height: 100%;
-            background: rgba(0,0,0,0.05);
-            z-index: 50;
+            background: rgba(0,0,0,0.03);
+            z-index: 60;
         }
 
         .scroll-progress {
@@ -131,7 +133,7 @@
         }
 
         @media (max-width: 768px) {
-            .glass-panel { padding: 8vw 5vw; border-radius: 24px; }
+            .glass-panel { padding: 10vw 6vw; border-radius: 30px; }
             .content-wrapper { padding: 10px; }
         }
     </style>
@@ -142,19 +144,19 @@
     <div class="scroll-line"><div class="scroll-progress" id="progressBar"></div></div>
 
     <!-- Floating Booking -->
-    <a href="https://wa.me/917024616880" target="_blank" class="wa-fab" title="Book via WhatsApp">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.539 2.016 2.083-.554c1.011.589 1.834.877 3.204.877 3.178 0 5.767-2.586 5.768-5.766 0-3.18-2.589-5.766-5.767-5.766zm3.336 8.3c-.15.424-.87.818-1.205.867-.323.047-.736.084-2.181-.486-1.858-.735-3.036-2.624-3.128-2.748-.093-.124-.812-.979-.812-1.87 0-.891.465-1.328.631-1.515.166-.188.361-.235.481-.235.12 0 .241.001.346.005.111.004.259-.042.404.309.15.364.512 1.246.557 1.338.045.093.075.201.015.321-.06.12-.09.195-.181.299-.09.104-.188.233-.269.315-.09.091-.184.189-.08.369.104.18.463.765.992 1.235.681.604 1.255.792 1.435.882.18.09.285.075.39-.045.105-.12.45-.525.57-.705.12-.18.241-.15.405-.09.165.06 1.036.488 1.216.578.18.09.3.135.345.211.045.075.045.435-.105.859z"/></svg>
+    <a href="https://wa.me/917024616880" target="_blank" class="wa-fab" title="WhatsApp Rishabh">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.539 2.016 2.083-.554c1.011.589 1.834.877 3.204.877 3.178 0 5.767-2.586 5.768-5.766 0-3.18-2.589-5.766-5.767-5.766zm3.336 8.3c-.15.424-.87.818-1.205.867-.323.047-.736.084-2.181-.486-1.858-.735-3.036-2.624-3.128-2.748-.093-.124-.812-.979-.812-1.87 0-.891.465-1.328.631-1.515.166-.188.361-.235.481-.235.12 0 .241.001.346.005.111.004.259-.042.404.309.15.364.512 1.246.557 1.338.045.093.075.201.015.321-.06.12-.09.195-.181.299-.09.104-.188.233-.269.315-.09.091-.184.189-.08.369.104.18.463.765.992 1.235.681.604 1.255.792 1.435.882.18.09.285.075.39-.045.105-.12.45-.525.57-.705.12-.18.241-.15.405-.09.165.06 1.036.488 1.216.578.18.09.3.135.345.211.045.075.045.435-.105.859z"/></svg>
     </a>
 
-    <nav class="fixed top-0 w-full px-12 py-6 flex justify-between items-center z-[100]">
+    <nav class="fixed top-0 w-full px-12 py-8 flex justify-between items-center z-[100]">
         <div class="flex flex-col">
-            <span class="text-[7px] tracking-[0.4em] uppercase text-gray-400 font-bold">Neemuch • MP</span>
-            <h4 class="text-md font-bold tracking-tight">RISHABH <span class="gold-gradient italic">SHOP</span></h4>
+            <span class="text-[8px] tracking-[0.5em] uppercase text-blue-400 font-bold">Kanka • Neemuch</span>
+            <h4 class="text-lg font-bold tracking-tight">RISHABH <span class="gold-gradient italic">SHOP</span></h4>
         </div>
-        <div class="flex gap-6 text-[8px] font-bold uppercase tracking-[0.2em] text-gray-500">
-            <a href="#sizer" class="hover:text-blue-500 transition-all">Styles</a>
-            <a href="#location" class="hover:text-blue-500 transition-all">Atelier</a>
-            <a href="tel:+917024616880" class="text-black bg-blue-100 px-3 py-1 rounded-full">Call</a>
+        <div class="flex gap-8 text-[9px] font-bold uppercase tracking-[0.2em] text-gray-500">
+            <a href="#sizer" class="hover:text-blue-600 transition-all">Collections</a>
+            <a href="#location" class="hover:text-blue-600 transition-all">Location</a>
+            <a href="tel:+917024616880" class="text-white bg-blue-600 px-4 py-2 rounded-full hover:bg-blue-700 transition-colors">Book Now</a>
         </div>
     </nav>
 
@@ -164,18 +166,18 @@
             <div class="glass-panel">
                 <div class="grid md:grid-cols-12 w-full gap-6">
                     <div class="md:col-span-1 hidden md:flex items-center justify-center">
-                        <span class="vertical-text text-gray-300 font-bold uppercase tracking-[0.8em] text-[7px]">SINCE MCMXCVIII</span>
+                        <span class="vertical-text text-blue-200 font-bold uppercase tracking-[0.8em] text-[7px]">TRADITION & PRECISION</span>
                     </div>
                     <div class="md:col-span-7 flex flex-col justify-center">
-                        <h1 class="text-[clamp(2rem,8vw,6rem)] leading-[0.95] font-black italic gold-gradient reveal-hero">
-                            MODERN<br>HERITAGE<br>CRAFT.
+                        <h1 class="text-[clamp(2.5rem,8vw,6.5rem)] leading-[0.9] font-black italic gold-gradient reveal-hero">
+                            CRAFTING<br>TIMELESS<br>STRENGTH.
                         </h1>
                     </div>
-                    <div class="md:col-span-4 flex flex-col justify-end pb-4">
+                    <div class="md:col-span-4 flex flex-col justify-end pb-6">
                         <p class="text-gray-500 text-[12px] leading-relaxed max-w-xs reveal-sub font-light">
-                            Experience a new standard of grooming in <span class="text-black font-semibold">Kanka</span>. Precision tools, ancestral knowledge, and a focus on the finer details.
+                            Welcome to Neemuch's premier atelier. We blend the sharpest modern techniques with the soul of the traditional Indian ustaad.
                         </p>
-                        <div class="mt-4 h-[1px] w-8 bg-blue-300 reveal-sub"></div>
+                        <div class="mt-6 h-[1px] w-10 bg-blue-400 reveal-sub"></div>
                     </div>
                 </div>
             </div>
@@ -183,37 +185,37 @@
 
         <!-- Sizer Panel -->
         <section class="panel" id="sizer">
-            <div class="glass-panel !bg-blue-50/40">
+            <div class="glass-panel !bg-white/40">
                 <div class="grid md:grid-cols-2 w-full gap-12">
                     <div class="flex flex-col justify-center">
-                        <span class="text-[8px] text-blue-400 font-bold tracking-widest uppercase mb-1 block">Curated Catalog</span>
-                        <h2 class="text-2xl md:text-3xl mb-6">Signature <i class="font-light">Cuts.</i></h2>
+                        <span class="text-[8px] text-blue-500 font-bold tracking-widest uppercase mb-2 block">Interactive Index</span>
+                        <h2 class="text-3xl md:text-4xl mb-8 font-light italic">The Style <span class="font-black text-black">Menu.</span></h2>
                         
                         <div class="sizer-list max-w-xs">
                             <div class="sizer-option active" data-size="Skin Fade">
-                                <h3 class="text-lg font-bold">0.0 Skin Fade</h3>
-                                <p class="text-[9px] text-gray-400 uppercase tracking-tighter">Sharp, high-definition finish</p>
+                                <h3 class="text-xl font-bold">0.0 Skin Fade</h3>
+                                <p class="text-[9px] text-gray-400 uppercase tracking-tighter">Maximum contrast & definition</p>
                             </div>
                             <div class="sizer-option" data-size="Buzz Cut">
-                                <h3 class="text-lg font-bold">1.5 The Buzz</h3>
-                                <p class="text-[9px] text-gray-400 uppercase tracking-tighter">The minimalist standard</p>
+                                <h3 class="text-xl font-bold">1.5 The Buzz</h3>
+                                <p class="text-[9px] text-gray-400 uppercase tracking-tighter">Sharp, minimal maintenance</p>
                             </div>
                             <div class="sizer-option" data-size="Classic Crew">
-                                <h3 class="text-lg font-bold">4.0 Executive</h3>
-                                <p class="text-[9px] text-gray-400 uppercase tracking-tighter">Timeless corporate appeal</p>
+                                <h3 class="text-xl font-bold">4.0 Executive</h3>
+                                <p class="text-[9px] text-gray-400 uppercase tracking-tighter">Timeless corporate grooming</p>
                             </div>
                             <div class="sizer-option" data-size="Scissor Cut">
-                                <h3 class="text-lg font-bold">✂ Master Craft</h3>
-                                <p class="text-[9px] text-gray-400 uppercase tracking-tighter">Hand-textured heritage</p>
+                                <h3 class="text-xl font-bold">✂ Master Flow</h3>
+                                <p class="text-[9px] text-gray-400 uppercase tracking-tighter">Artisanal texture & length</p>
                             </div>
                         </div>
                     </div>
                     <div class="relative flex items-center justify-center">
-                        <div class="w-full max-w-xs aspect-[4/5] bg-white rounded-[32px] overflow-hidden shadow-xl relative group">
-                            <img id="style-preview" src="https://images.unsplash.com/photo-1621605815841-aa33c544f8d4?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700">
-                            <div class="absolute inset-0 bg-gradient-to-t from-blue-100/30 to-transparent"></div>
-                            <div class="absolute bottom-6 left-6">
-                                <h4 id="current-name" class="text-xs font-bold uppercase tracking-widest text-black/60">Skin Fade</h4>
+                        <div class="w-full max-w-sm aspect-[4/5] bg-white rounded-[40px] overflow-hidden shadow-2xl relative group">
+                            <img id="style-preview" src="https://images.unsplash.com/photo-1621605815841-aa33c544f8d4?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000">
+                            <div class="absolute inset-0 bg-gradient-to-t from-blue-50/50 to-transparent"></div>
+                            <div class="absolute bottom-8 left-8">
+                                <h4 id="current-name" class="text-sm font-bold uppercase tracking-widest text-black/80">Skin Fade</h4>
                             </div>
                         </div>
                     </div>
@@ -223,15 +225,15 @@
 
         <!-- Quote Panel -->
         <section class="panel">
-            <div class="glass-panel !justify-center text-center">
+            <div class="glass-panel !justify-center text-center !bg-blue-100/30">
                 <div class="max-w-xl">
-                    <h2 class="text-xl md:text-2xl mb-4 leading-relaxed italic font-normal text-blue-900/80">
-                        "Your groom is your <span class="gold-gradient font-black">silent signature</span>. It speaks of the respect you hold for yourself."
+                    <h2 class="text-2xl md:text-3xl mb-4 leading-relaxed italic font-normal text-blue-900/70">
+                        "Your groom is your <span class="gold-gradient font-black">silent signature</span>. It tells the story of the man you choose to be."
                     </h2>
-                    <div class="flex gap-2 justify-center items-center mt-6">
-                        <div class="h-[1px] w-4 bg-blue-200"></div>
-                        <span class="text-[8px] uppercase tracking-[0.2em] text-gray-400 font-bold">Ustaad Rishabh S.</span>
-                        <div class="h-[1px] w-4 bg-blue-200"></div>
+                    <div class="flex gap-3 justify-center items-center mt-8">
+                        <div class="h-[1px] w-6 bg-blue-300"></div>
+                        <span class="text-[9px] uppercase tracking-[0.3em] text-gray-400 font-bold">Rishabh Shop • Neemuch</span>
+                        <div class="h-[1px] w-6 bg-blue-300"></div>
                     </div>
                 </div>
             </div>
@@ -240,33 +242,33 @@
         <!-- Location Panel -->
         <section class="panel" id="location">
             <div class="glass-panel flex-col !items-start">
-                <div class="w-full">
-                    <h2 class="text-3xl mb-1 italic">Visit the <i class="gold-gradient font-black">Atelier.</i></h2>
-                    <p class="text-blue-400/80 text-[10px] uppercase font-bold tracking-widest">Kanka, Neemuch District</p>
+                <div class="w-full border-b border-white/60 pb-8">
+                    <h2 class="text-4xl mb-1 italic">Visit our <i class="gold-gradient font-black">Atelier.</i></h2>
+                    <p class="text-blue-500 text-[10px] uppercase font-bold tracking-widest">Kanka Main Market, Neemuch</p>
                 </div>
                 
-                <div class="grid md:grid-cols-3 w-full gap-8 mt-12 border-t border-white/40 pt-10">
+                <div class="grid md:grid-cols-3 w-full gap-10 mt-10">
                     <div>
-                        <h4 class="text-[8px] uppercase text-gray-400 font-bold mb-2 tracking-widest">The Address</h4>
-                        <p class="text-md font-bold">Kanka, Neemuch,<br>Madhya Pradesh 458441</p>
-                        <a href="https://wa.me/917024616880" class="inline-block mt-3 text-[9px] font-bold text-blue-500 uppercase">Map & WhatsApp →</a>
+                        <h4 class="text-[9px] uppercase text-gray-400 font-bold mb-3 tracking-widest">The Address</h4>
+                        <p class="text-md font-bold leading-snug">Opposite Market Square,<br>Kanka, Neemuch, MP 458441</p>
+                        <a href="https://wa.me/917024616880" class="inline-block mt-4 text-[10px] font-bold text-blue-600 border-b border-blue-600 pb-1">Open in Maps →</a>
                     </div>
                     <div>
-                        <h4 class="text-[8px] uppercase text-gray-400 font-bold mb-2 tracking-widest">Contact</h4>
-                        <p class="text-md font-bold">+91 7024616880</p>
-                        <p class="text-[9px] text-gray-400 uppercase mt-1">Available for Call/Chat</p>
+                        <h4 class="text-[9px] uppercase text-gray-400 font-bold mb-3 tracking-widest">Reach Out</h4>
+                        <p class="text-lg font-bold">+91 7024616880</p>
+                        <p class="text-[9px] text-gray-400 uppercase mt-2">Available on WhatsApp</p>
                     </div>
                     <div>
-                        <h4 class="text-[8px] uppercase text-gray-400 font-bold mb-2 tracking-widest">Hours</h4>
-                        <p class="text-md font-bold">09:00 — 21:00</p>
-                        <p class="text-[9px] text-green-500 uppercase font-bold mt-1">Open 7 Days</p>
+                        <h4 class="text-[9px] uppercase text-gray-400 font-bold mb-3 tracking-widest">Hours</h4>
+                        <p class="text-lg font-bold">09:00 — 21:00</p>
+                        <p class="text-[9px] text-green-600 uppercase font-bold mt-2">Open All Week</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <footer class="py-12 text-center">
-            <p class="text-[7px] uppercase tracking-[0.6em] text-gray-300 font-bold">The Royal Grooming Society • Neemuch</p>
+        <footer class="py-16 text-center">
+            <p class="text-[8px] uppercase tracking-[0.8em] text-gray-300 font-bold">The Royal Grooming Society • 2025</p>
         </footer>
     </main>
 
@@ -287,61 +289,61 @@
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setSize(window.innerWidth, window.innerHeight);
 
-            // Light mode lighting - slightly bluer light for the scene
-            const ambient = new THREE.AmbientLight(0xffffff, 1.3);
+            // Vibrant Light Mode Lighting
+            const ambient = new THREE.AmbientLight(0xffffff, 1.4);
             scene.add(ambient);
-            const p1 = new THREE.PointLight(0xD4AF37, 1.2, 50); p1.position.set(5, 5, 5);
-            const p2 = new THREE.PointLight(0xdbeafe, 1, 50); p2.position.set(-5, -5, 5);
+            const p1 = new THREE.PointLight(0xD4AF37, 1.5, 60); p1.position.set(8, 8, 8);
+            const p2 = new THREE.PointLight(0x3b82f6, 1.2, 60); p2.position.set(-8, -8, 8);
             scene.add(p1, p2);
 
-            const goldMat = new THREE.MeshStandardMaterial({ color: 0xD4AF37, metalness: 0.5, roughness: 0.4 });
-            const blueMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, metalness: 0.7, roughness: 0.2 });
+            const goldMat = new THREE.MeshStandardMaterial({ color: 0xD4AF37, metalness: 0.7, roughness: 0.2 });
+            const blueMat = new THREE.MeshStandardMaterial({ color: 0x1e40af, metalness: 0.8, roughness: 0.1 });
 
             // 1. Comb
             const comb = new THREE.Group();
-            const back = new THREE.Mesh(new THREE.BoxGeometry(0.12, 5, 0.3), blueMat);
+            const back = new THREE.Mesh(new THREE.BoxGeometry(0.14, 5.5, 0.3), blueMat);
             comb.add(back);
-            for(let i=0; i<25; i++){
-                const t = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.04, 0.1), blueMat);
-                t.position.set(0.5, -2.2 + (i * 0.18), 0);
+            for(let i=0; i<28; i++){
+                const t = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.04, 0.1), blueMat);
+                t.position.set(0.6, -2.5 + (i * 0.18), 0);
                 comb.add(t);
             }
-            comb.position.set(5, 2, 0);
+            comb.position.set(6, 4, 0);
 
             // 2. Scissors
             const scissors = new THREE.Group();
-            const b1 = new THREE.Mesh(new THREE.BoxGeometry(0.08, 4.5, 0.1), blueMat); b1.rotation.z = 0.15;
-            const b2 = new THREE.Mesh(new THREE.BoxGeometry(0.08, 4.5, 0.1), blueMat); b2.rotation.z = -0.15;
-            const r1 = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.06, 16, 32), blueMat); r1.position.set(-0.6, -2, 0);
-            const r2 = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.06, 16, 32), blueMat); r2.position.set(0.6, -2, 0);
+            const b1 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 5, 0.15), goldMat); b1.rotation.z = 0.2;
+            const b2 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 5, 0.15), goldMat); b2.rotation.z = -0.2;
+            const r1 = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.08, 16, 32), goldMat); r1.position.set(-0.7, -2.5, 0);
+            const r2 = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.08, 16, 32), goldMat); r2.position.set(0.7, -2.5, 0);
             scissors.add(b1, b2, r1, r2);
-            scissors.position.set(-5, -2, -3);
+            scissors.position.set(-6, -3, -2);
 
             // 3. Razor
             const razor = new THREE.Group();
-            const handle = new THREE.Mesh(new THREE.BoxGeometry(0.25, 3.5, 0.12), goldMat);
-            const blade = new THREE.Mesh(new THREE.BoxGeometry(0.2, 3.2, 0.03), blueMat);
-            blade.position.set(0.6, 1.4, 0); blade.rotation.z = -0.3;
+            const handle = new THREE.Mesh(new THREE.BoxGeometry(0.3, 4, 0.15), blueMat);
+            const blade = new THREE.Mesh(new THREE.BoxGeometry(0.25, 3.5, 0.04), goldMat);
+            blade.position.set(0.7, 1.6, 0); blade.rotation.z = -0.4;
             razor.add(handle, blade);
-            razor.position.set(3, -5, 2);
+            razor.position.set(4, -7, 3);
 
             tools = [comb, scissors, razor];
             tools.forEach(t => scene.add(t));
 
-            // Soft blue/white particles
+            // Floating blue particles
             const pGeo = new THREE.BufferGeometry();
             const pPos = [];
-            for(let i=0; i<400; i++) pPos.push((Math.random()-0.5)*50, (Math.random()-0.5)*50, (Math.random()-0.5)*50);
+            for(let i=0; i<600; i++) pPos.push((Math.random()-0.5)*60, (Math.random()-0.5)*60, (Math.random()-0.5)*60);
             pGeo.setAttribute('position', new THREE.Float32BufferAttribute(pPos, 3));
-            scene.add(new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0xbfdbfe, size: 0.03, transparent: true, opacity: 0.5 })));
+            scene.add(new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0x60a5fa, size: 0.04, transparent: true, opacity: 0.4 })));
         }
 
         function animate() {
             requestAnimationFrame(animate);
             tools.forEach((t, i) => {
-                t.rotation.y += 0.002 + (i * 0.001);
-                t.rotation.x += 0.001;
-                t.position.y += Math.sin(Date.now() * 0.0007 + i) * 0.002;
+                t.rotation.y += 0.004 + (i * 0.001);
+                t.rotation.x += 0.002;
+                t.position.y += Math.sin(Date.now() * 0.0006 + i) * 0.003;
             });
             renderer.render(scene, camera);
         }
@@ -355,16 +357,18 @@
                 scrollTrigger: { trigger: "body", start: "top top", end: "bottom bottom", scrub: 0.3 }
             });
 
+            // Make tools weave across the content on scroll
             tools.forEach((t, i) => {
                 gsap.to(t.position, {
-                    x: (i%2 === 0 ? -1 : 1) * 8,
-                    y: (i%2 === 0 ? 5 : -5),
-                    scrollTrigger: { trigger: "main", start: "top top", end: "bottom bottom", scrub: 3 }
+                    x: (i%2 === 0 ? -1 : 1) * 9,
+                    y: (i%2 === 0 ? 6 : -6),
+                    z: 0,
+                    scrollTrigger: { trigger: "main", start: "top top", end: "bottom bottom", scrub: 4 }
                 });
             });
 
-            gsap.from(".reveal-hero", { opacity: 0, x: -30, duration: 1, ease: "power3.out" });
-            gsap.from(".reveal-sub", { opacity: 0, y: 20, duration: 0.8, delay: 0.3, stagger: 0.2 });
+            gsap.from(".reveal-hero", { opacity: 0, x: -40, duration: 1.2, ease: "power3.out" });
+            gsap.from(".reveal-sub", { opacity: 0, y: 30, duration: 1, delay: 0.3, stagger: 0.2 });
 
             const options = document.querySelectorAll('.sizer-option');
             const preview = document.getElementById('style-preview');
