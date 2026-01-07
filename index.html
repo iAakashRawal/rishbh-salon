@@ -8,17 +8,27 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gold: '#A6891B',
+                        'gold-light': '#D4AF37',
+                    },
+                    screens: {
+                        'xs': '400px',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700&display=swap');
 
         :root {
-            --gold: #A6891B;
-            --gold-light: #D4AF37;
-            --charcoal: #121212;
-            --accent-blue: #2563eb;
-            --glass: rgba(255, 255, 255, 0.75);
-            
-            /* Z-Index Layers */
             --z-canvas: 50;
             --z-content: 10;
             --z-elevated: 100;
@@ -28,8 +38,6 @@
 
         body {
             margin: 0;
-            background-color: #f8fafc;
-            color: var(--charcoal);
             font-family: 'Plus Jakarta Sans', sans-serif;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
@@ -37,7 +45,6 @@
 
         h1, h2, h3 { font-family: 'Playfair Display', serif; }
 
-        /* 3D Canvas Layered behind Nav/Sizer but above base */
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -53,17 +60,14 @@
             z-index: var(--z-content);
         }
 
-        /* Glass Stacking */
         .glass-panel {
-            background: var(--glass);
             backdrop-filter: blur(16px) saturate(180%);
             -webkit-backdrop-filter: blur(16px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 40px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Elevating Sizer Section specifically */
         .elevated-layer {
             position: relative;
             z-index: var(--z-elevated) !important;
@@ -89,7 +93,6 @@
             box-shadow: 0 15px 30px rgba(37, 211, 102, 0.4);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .wa-fab:hover { transform: scale(1.1) rotate(5deg); }
 
         .sizer-option {
             padding: 1.25rem 1rem;
@@ -97,9 +100,10 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
+
         .sizer-option.active {
             background: rgba(37, 99, 235, 0.08);
-            border-left-color: var(--accent-blue);
+            border-left-color: #2563eb;
             transform: translateX(12px);
         }
 
@@ -118,44 +122,59 @@
             justify-content: center;
             transition: opacity 0.6s ease;
         }
+
+        .dark #loader { background: #0f172a; }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-500">
 
     <div id="loader">
         <div class="flex flex-col items-center">
             <div class="w-10 h-10 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            <p class="mt-6 text-[9px] uppercase tracking-[0.4em] font-black text-blue-600/40">Rishabh Shop • Neemuch</p>
+            <p class="mt-6 text-[9px] uppercase tracking-[0.4em] font-black text-blue-600">Rishabh Shop • Neemuch</p>
         </div>
     </div>
 
     <canvas id="bg-canvas"></canvas>
 
-    <!-- Navigation: Highest Layer -->
-    <nav class="fixed top-0 w-full px-6 py-5 md:px-12 md:py-8 flex justify-between items-center z-[200]">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full px-6 py-4 md:px-12 md:py-5 flex justify-between items-center z-[200] bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 shadow-md transition-colors duration-500">
         <div class="flex flex-col elevated-layer">
-            <span class="text-[7px] md:text-[8px] tracking-[0.5em] uppercase text-blue-600 font-black mb-1">Kanka • Neemuch</span>
+            <span class="text-[7px] md:text-[8px] tracking-[0.5em] uppercase text-blue-600 font-black mb-0.5">Kanka • Neemuch</span>
             <h4 class="text-sm md:text-xl font-black tracking-tighter uppercase leading-none">RISHABH <span class="gold-gradient italic">SHOP</span></h4>
         </div>
-        <div class="flex items-center gap-4 md:gap-10 elevated-layer">
-            <a href="#sizer" class="hidden sm:block text-[9px] font-black uppercase tracking-[0.3em] text-gray-400 hover:text-blue-600 transition-all">Collections</a>
-            <a href="tel:+917024616880" class="text-[10px] font-black uppercase tracking-widest text-white bg-blue-600 px-6 py-3 rounded-full shadow-xl shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all">Book Now</a>
+        
+        <div class="flex items-center gap-4 md:gap-8 elevated-layer">
+            <div class="hidden sm:flex items-center gap-6">
+                <a href="#sizer" class="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-blue-600 transition-all">Collections</a>
+                <a href="#pricing" class="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-blue-600 transition-all">Investment</a>
+            </div>
+            
+            <button id="theme-toggle" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
+                <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
+            </button>
+
+            <a href="tel:+916263679155" class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white bg-blue-600 px-5 py-2.5 rounded-full shadow-lg shadow-blue-200 dark:shadow-none hover:bg-blue-700 active:scale-95 transition-all">
+                <i data-lucide="phone" class="w-3 h-3"></i>
+                <span class="hidden xs:inline">Book Now</span>
+            </a>
         </div>
     </nav>
 
     <!-- WhatsApp FAB -->
-    <a href="https://wa.me/917024616880" target="_blank" class="wa-fab p-4 rounded-full" title="Chat with Rishabh">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.539 2.016 2.083-.554c1.011.589 1.834.877 3.204.877 3.178 0 5.767-2.586 5.768-5.766 0-3.18-2.589-5.766-5.767-5.766zm3.336 8.3c-.15.424-.87.818-1.205.867-.323.047-.736.084-2.181-.486-1.858-.735-3.036-2.624-3.128-2.748-.093-.124-.812-.979-.812-1.87 0-.891.465-1.328.631-1.515.166-.188.361-.235.481-.235.12 0 .241.001.346.005.111.004.259-.042.404.309.15.364.512 1.246.557 1.338.045.093.075.201.015.321-.06.12-.09.195-.181.299-.09.104-.188.233-.269.315-.09.091-.184.189-.08.369.104.18.463.765.992 1.235.681.604 1.255.792 1.435.882.18.09.285.075.39-.045.105-.12.45-.525.57-.705.12-.18.241-.15.405-.09.165.06 1.036.488 1.216.578.18.09.3.135.345.211.045.075.045.435-.105.859z"/></svg>
+    <a href="https://wa.me/916263679155" target="_blank" class="wa-fab p-4 rounded-full" title="Chat with Rishabh">
+        <i data-lucide="message-circle" class="w-6 h-6"></i>
     </a>
 
-    <main class="content-wrapper px-4 py-24 md:px-12 md:py-32 space-y-16 md:space-y-32">
+    <main class="content-wrapper px-4 pt-32 pb-16 md:px-12 space-y-16 md:space-y-32">
         
         <!-- Hero Section -->
-        <section class="min-h-[80vh] flex items-center relative">
-            <div class="glass-panel w-full p-8 md:p-16 lg:p-24 shadow-2xl">
+        <section class="min-h-[70vh] flex items-center relative">
+            <div class="glass-panel w-full p-8 md:p-16 lg:p-24 shadow-2xl bg-white/70 dark:bg-slate-900/40">
                 <div class="grid md:grid-cols-12 gap-8 items-center">
                     <div class="md:col-span-1 hidden lg:flex justify-center elevated-layer">
-                        <span class="vertical-text text-blue-300 font-black uppercase tracking-[1.2em] text-[9px]">KANKA NEEMUCH • 2025</span>
+                        <span class="vertical-text text-blue-300 dark:text-blue-900 font-black uppercase tracking-[1.2em] text-[9px]">KANKA NEEMUCH • 2025</span>
                     </div>
                     <div class="md:col-span-12 lg:col-span-7 elevated-layer">
                         <h1 class="text-[clamp(2.8rem,10vw,8rem)] leading-[0.85] font-black italic gold-gradient reveal-hero mb-8">
@@ -164,17 +183,17 @@
                         <div class="lg:hidden h-[3px] w-20 bg-blue-600 mb-8 rounded-full"></div>
                     </div>
                     <div class="md:col-span-12 lg:col-span-4 space-y-8 elevated-layer">
-                        <p class="text-gray-500 text-sm md:text-lg leading-relaxed max-w-sm font-light reveal-sub">
+                        <p class="text-slate-500 dark:text-slate-400 text-sm md:text-lg leading-relaxed max-w-sm font-light reveal-sub">
                             The definitive grooming standard in Neemuch. Merging artisanal heritage with surgical-grade modern fades.
                         </p>
                         <div class="flex items-center gap-6 reveal-sub">
-                            <div class="px-4 py-2 rounded-xl bg-blue-50 border border-blue-100 flex flex-col items-center justify-center">
-                                <span class="text-blue-600 font-black text-lg">5.0</span>
+                            <div class="px-4 py-2 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 flex flex-col items-center justify-center">
+                                <span class="text-blue-600 dark:text-blue-400 font-black text-lg">5.0</span>
                                 <span class="text-[7px] uppercase font-bold text-blue-400 tracking-tighter">Verified</span>
                             </div>
                             <div>
-                                <p class="text-[9px] font-black uppercase tracking-widest text-gray-300">Authority</p>
-                                <p class="text-sm font-bold text-gray-700">Master Groomers</p>
+                                <p class="text-[9px] font-black uppercase tracking-widest text-slate-300 dark:text-slate-600">Authority</p>
+                                <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Master Groomers</p>
                             </div>
                         </div>
                     </div>
@@ -182,36 +201,38 @@
             </div>
         </section>
 
-        <!-- Style Selector: Elevated Layer -->
+        <!-- Style Selector -->
         <section id="sizer" class="scroll-mt-32 elevated-layer">
-            <div class="glass-panel p-8 md:p-20 shadow-2xl">
+            <div class="glass-panel p-8 md:p-20 shadow-2xl bg-white/60 dark:bg-slate-900/30">
                 <div class="grid lg:grid-cols-2 gap-16 items-center">
                     <div class="order-2 lg:order-1">
-                        <span class="text-[9px] text-blue-600 font-black tracking-[0.4em] uppercase mb-5 block">The Catalog</span>
-                        <h2 class="text-4xl md:text-6xl mb-12 font-light italic leading-none">Style <span class="font-black text-black">Mastery.</span></h2>
+                        <span class="flex items-center gap-2 text-[9px] text-blue-600 font-black tracking-[0.4em] uppercase mb-5">
+                            <i data-lucide="scissors" class="w-3 h-3"></i> The Catalog
+                        </span>
+                        <h2 class="text-4xl md:text-6xl mb-12 font-light italic leading-none text-slate-900 dark:text-white">Style Mastery.</h2>
                         
                         <div class="space-y-3 max-w-md">
-                            <div class="sizer-option active" data-size="Skin Fade" data-img="https://images.unsplash.com/photo-1621605815841-aa33c544f8d4?q=80&w=1000&auto=format&fit=crop">
-                                <h3 class="text-2xl font-bold">The Signature Fade</h3>
-                                <p class="text-[10px] text-gray-400 uppercase tracking-widest mt-2 font-medium">Surgical gradients & crisp edges</p>
+                            <div class="sizer-option active group" data-size="Skin Fade" data-img="https://images.unsplash.com/photo-1621605815841-aa33c544f8d4?q=80&w=1000&auto=format&fit=crop">
+                                <h3 class="text-2xl font-bold group-hover:text-blue-600 transition-colors">The Signature Fade</h3>
+                                <p class="text-[10px] text-slate-400 uppercase tracking-widest mt-2 font-medium">Surgical gradients & crisp edges</p>
                             </div>
-                            <div class="sizer-option" data-size="Buzz Cut" data-img="https://images.unsplash.com/photo-1593702295094-ada74bc1099a?q=80&w=1000&auto=format&fit=crop">
-                                <h3 class="text-2xl font-bold">Urban Buzz</h3>
-                                <p class="text-[10px] text-gray-400 uppercase tracking-widest mt-2 font-medium">Minimalist, sharp, and confident</p>
+                            <div class="sizer-option group" data-size="Buzz Cut" data-img="https://images.unsplash.com/photo-1593702295094-ada74bc1099a?q=80&w=1000&auto=format&fit=crop">
+                                <h3 class="text-2xl font-bold group-hover:text-blue-600 transition-colors">Urban Buzz</h3>
+                                <p class="text-[10px] text-slate-400 uppercase tracking-widest mt-2 font-medium">Minimalist, sharp, and confident</p>
                             </div>
-                            <div class="sizer-option" data-size="Classic Crew" data-img="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=1000&auto=format&fit=crop">
-                                <h3 class="text-2xl font-bold">Executive Crew</h3>
-                                <p class="text-[10px] text-gray-400 uppercase tracking-widest mt-2 font-medium">Timeless profile for the modern man</p>
+                            <div class="sizer-option group" data-size="Classic Crew" data-img="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=1000&auto=format&fit=crop">
+                                <h3 class="text-2xl font-bold group-hover:text-blue-600 transition-colors">Executive Crew</h3>
+                                <p class="text-[10px] text-slate-400 uppercase tracking-widest mt-2 font-medium">Timeless profile for the modern man</p>
                             </div>
-                            <div class="sizer-option" data-size="Scissor Cut" data-img="https://images.unsplash.com/photo-1605497746444-144d88a402ad?q=80&w=1000&auto=format&fit=crop">
-                                <h3 class="text-2xl font-bold">The Artisan Flow</h3>
-                                <p class="text-[10px] text-gray-400 uppercase tracking-widest mt-2 font-medium">Freehand texture & bespoke length</p>
+                            <div class="sizer-option group" data-size="Scissor Cut" data-img="https://images.unsplash.com/photo-1605497746444-144d88a402ad?q=80&w=1000&auto=format&fit=crop">
+                                <h3 class="text-2xl font-bold group-hover:text-blue-600 transition-colors">The Artisan Flow</h3>
+                                <p class="text-[10px] text-slate-400 uppercase tracking-widest mt-2 font-medium">Freehand texture & bespoke length</p>
                             </div>
                         </div>
                     </div>
                     
                     <div class="order-1 lg:order-2 flex justify-center">
-                        <div class="w-full max-w-sm aspect-[4/5] bg-white rounded-[50px] overflow-hidden shadow-3xl relative ring-1 ring-gray-100">
+                        <div class="w-full max-w-sm aspect-[4/5] bg-white dark:bg-slate-800 rounded-[50px] overflow-hidden shadow-3xl relative ring-1 ring-slate-100 dark:ring-slate-700">
                             <img id="style-preview" src="https://images.unsplash.com/photo-1621605815841-aa33c544f8d4?q=80&w=1000&auto=format&fit=crop" 
                                  class="w-full h-full object-cover grayscale brightness-90 transition-all duration-700 ease-in-out">
                             <div class="absolute inset-0 bg-gradient-to-t from-blue-900/60 to-transparent"></div>
@@ -224,71 +245,146 @@
             </div>
         </section>
 
-        <!-- Quote Block -->
-        <section class="py-16 elevated-layer">
-            <div class="max-w-4xl mx-auto text-center px-6">
-                <h2 class="text-2xl md:text-5xl leading-tight italic font-light text-blue-900/40 reveal-sub">
-                    "A haircut is a conversation. <span class="gold-gradient font-black">Make yours memorable</span>."
-                </h2>
-                <div class="mt-14 flex items-center justify-center gap-6">
-                    <div class="h-[1px] w-12 bg-gold/30"></div>
-                    <span class="text-[10px] font-black uppercase tracking-[0.6em] text-gray-400">Rishabh G. • Founder</span>
-                    <div class="h-[1px] w-12 bg-gold/30"></div>
+        <!-- Pricing Section -->
+        <section id="pricing" class="scroll-mt-32 elevated-layer">
+            <div class="glass-panel p-8 md:p-20 shadow-2xl bg-white/70 dark:bg-slate-900/40">
+                <div class="grid lg:grid-cols-12 gap-12">
+                    <div class="lg:col-span-4">
+                        <span class="flex items-center gap-2 text-[9px] text-blue-600 font-black tracking-[0.4em] uppercase mb-5">
+                            <i data-lucide="gem" class="w-3 h-3"></i> Investment
+                        </span>
+                        <h2 class="text-4xl md:text-5xl font-light italic leading-tight mb-6 text-slate-900 dark:text-white">Premium Rates.</h2>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm font-light leading-relaxed mb-8">Quality grooming is an investment in your personal brand. We provide world-class service at local values.</p>
+                        <div class="p-6 rounded-3xl bg-blue-600 text-white shadow-xl shadow-blue-200 dark:shadow-none">
+                            <h4 class="text-xs font-black uppercase tracking-widest mb-2 flex items-center gap-2">
+                                <i data-lucide="crown" class="w-4 h-4"></i> The Royal Pass
+                            </h4>
+                            <p class="text-xl font-bold">Priority Booking & Unlimited Styling</p>
+                            <p class="text-[10px] uppercase font-black tracking-widest mt-4 opacity-70">Enquire at Desk</p>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-8 space-y-1">
+                        <!-- Pricing Grid -->
+                        <div class="group flex justify-between items-center p-6 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all border-b border-slate-100 dark:border-slate-800">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-blue-600">
+                                    <i data-lucide="user" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-black">Classic Cut</h4>
+                                    <p class="text-[9px] text-slate-400 uppercase tracking-widest font-bold">Traditional Taper & Wash</p>
+                                </div>
+                            </div>
+                            <span class="text-2xl font-black italic gold-gradient">₹150</span>
+                        </div>
+                        <div class="group flex justify-between items-center p-6 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all border-b border-slate-100 dark:border-slate-800">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-blue-600">
+                                    <i data-lucide="zap" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-black">Signature Fade</h4>
+                                    <p class="text-[9px] text-slate-400 uppercase tracking-widest font-bold">Master Blend Precision</p>
+                                </div>
+                            </div>
+                            <span class="text-2xl font-black italic gold-gradient">₹250</span>
+                        </div>
+                        <div class="group flex justify-between items-center p-6 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all border-b border-slate-100 dark:border-slate-800">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-blue-600">
+                                    <i data-lucide="brush" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-black">Beard Sculpting</h4>
+                                    <p class="text-[9px] text-slate-400 uppercase tracking-widest font-bold">Razor Sharp Lining</p>
+                                </div>
+                            </div>
+                            <span class="text-2xl font-black italic gold-gradient">₹100</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
-
-        <!-- Location & Contact -->
-        <section id="location" class="scroll-mt-32 elevated-layer">
-            <div class="glass-panel p-8 md:p-20">
-                <div class="border-b border-gray-100 pb-12 mb-12 flex flex-col md:flex-row justify-between items-end gap-6">
-                    <h2 class="text-5xl md:text-7xl italic font-light leading-none">The <span class="gold-gradient font-black">Studio.</span></h2>
-                    <span class="text-[10px] font-black uppercase tracking-[0.4em] text-blue-600">Kanka Main Market</span>
-                </div>
-                
-                <div class="grid md:grid-cols-3 gap-16">
-                    <div class="space-y-6">
-                        <h4 class="text-[10px] uppercase text-gray-400 font-black tracking-widest">Base of Operations</h4>
-                        <p class="text-xl font-bold leading-snug">Opposite Market Gate,<br>Kanka, Neemuch, MP 458441</p>
-                        <a href="https://maps.google.com" target="_blank" class="inline-flex items-center text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 hover:text-gold transition-colors">
-                            Launch Navigation <span class="ml-3">→</span>
-                        </a>
-                    </div>
-                    
-                    <div class="space-y-6">
-                        <h4 class="text-[10px] uppercase text-gray-400 font-black tracking-widest">Direct Contact</h4>
-                        <p class="text-4xl font-black italic gold-gradient tracking-tighter">+91 7024616880</p>
-                        <p class="text-[10px] text-blue-400 uppercase font-black tracking-widest">Priority WhatsApp Available</p>
-                    </div>
-                    
-                    <div class="space-y-6">
-                        <h4 class="text-[10px] uppercase text-gray-400 font-black tracking-widest">Operating Hours</h4>
-                        <div class="flex justify-between items-center text-md border-b border-gray-50 pb-2">
-                            <span class="font-bold text-gray-600">Open Daily</span>
-                            <span class="text-gray-400">09:00 — 21:00</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-2.5 h-2.5 rounded-full bg-green-500 shadow-lg shadow-green-200 animate-pulse"></div>
-                            <span class="text-[10px] font-black uppercase text-green-600 tracking-widest">Taking Clients Now</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <footer class="py-24 text-center border-t border-gray-100/50 elevated-layer">
-            <div class="mb-8 flex justify-center gap-6">
-                <div class="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
-                <div class="w-1.5 h-1.5 rounded-full bg-gold"></div>
-                <div class="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
-            </div>
-            <p class="text-[10px] uppercase tracking-[0.9em] text-gray-300 font-black">Elite Grooming Society • 2025</p>
-        </footer>
     </main>
 
+    <!-- Global Full-Width Footer (Outside of Main Container) -->
+    <footer class="z-[100] relative">
+        <div class="bg-blue-600 dark:bg-blue-800 text-white w-full py-16 px-6 md:px-12 lg:px-24">
+            <div class="max-w-[1440px] mx-auto grid md:grid-cols-12 gap-12 border-b border-blue-500/30 pb-16 mb-12">
+                <div class="md:col-span-5 space-y-6">
+                    <div class="flex flex-col">
+                        <span class="text-[8px] tracking-[0.6em] uppercase text-blue-200 font-black mb-1">Elite Grooming</span>
+                        <h4 class="text-3xl font-black tracking-tighter uppercase leading-none">RISHABH <span class="italic text-gold-light">SHOP</span></h4>
+                    </div>
+                    <p class="text-blue-100 text-sm max-w-sm font-light leading-relaxed">The standard-bearer for male grooming in Kanka. We curate confidence through surgical precision and artisanal care.</p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full border border-blue-500/50 flex items-center justify-center hover:bg-white hover:text-blue-600 transition-all">
+                            <i data-lucide="instagram" class="w-4 h-4"></i>
+                        </a>
+                        <a href="https://wa.me/916263679155" class="w-10 h-10 rounded-full border border-blue-500/50 flex items-center justify-center hover:bg-white hover:text-blue-600 transition-all">
+                            <i data-lucide="message-square" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="md:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-8">
+                    <div class="space-y-6">
+                        <h4 class="text-[10px] font-black uppercase tracking-widest text-blue-200">Explore</h4>
+                        <ul class="space-y-4 text-sm font-medium text-blue-100">
+                            <li><a href="#sizer" class="hover:text-gold-light transition-colors">Collections</a></li>
+                            <li><a href="#pricing" class="hover:text-gold-light transition-colors">Pricing</a></li>
+                            <li><a href="#location" class="hover:text-gold-light transition-colors">Location</a></li>
+                        </ul>
+                    </div>
+                    <div class="space-y-6">
+                        <h4 class="text-[10px] font-black uppercase tracking-widest text-blue-200">Legal</h4>
+                        <ul class="space-y-4 text-sm font-medium text-blue-100">
+                            <li><a href="#" class="hover:text-gold-light transition-colors">Privacy Policy</a></li>
+                            <li><a href="#" class="hover:text-gold-light transition-colors">Terms of Service</a></li>
+                        </ul>
+                    </div>
+                    <div class="space-y-6">
+                        <h4 class="text-[10px] font-black uppercase tracking-widest text-blue-200">Direct Call</h4>
+                        <a href="tel:+916263679155" class="flex items-center gap-3 text-lg font-black hover:text-gold-light transition-colors group">
+                            <i data-lucide="phone-call" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+                            +91 62636 79155
+                        </a>
+                        <p class="text-xs text-blue-200/70 font-medium">Opposite Market Gate,<br>Kanka, Neemuch, MP</p>
+                    </div>
+                </div>
+            </div>
+            <div class="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                <p class="text-[9px] uppercase tracking-[0.6em] text-blue-200/60 font-black">Royal Society • 2025</p>
+                <div class="flex items-center gap-4">
+                    <span class="text-[8px] font-black uppercase tracking-widest text-blue-200/40 italic">Excellence in Grooming</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <script>
+        // --- THEME ENGINE ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        html.className = savedTheme + ' scroll-smooth';
+
+        themeToggle.addEventListener('click', () => {
+            const isDark = html.classList.contains('dark');
+            const newTheme = isDark ? 'light' : 'dark';
+            html.className = newTheme + ' scroll-smooth';
+            localStorage.setItem('theme', newTheme);
+            
+            if (ambientLight) {
+                gsap.to(ambientLight, {
+                    intensity: newTheme === 'dark' ? 0.8 : 1.4,
+                    duration: 1
+                });
+            }
+        });
+
         // --- THREE.JS ENGINE ---
-        let scene, camera, renderer, tools = [];
+        let scene, camera, renderer, tools = [], ambientLight;
 
         function init3D() {
             scene = new THREE.Scene();
@@ -303,9 +399,9 @@
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             renderer.setSize(window.innerWidth, window.innerHeight);
 
-            // Studio Lighting - Premium Contrast
-            const ambient = new THREE.AmbientLight(0xffffff, 1.4);
-            scene.add(ambient);
+            ambientLight = new THREE.AmbientLight(0xffffff, html.classList.contains('dark') ? 0.8 : 1.4);
+            scene.add(ambientLight);
+            
             const p1 = new THREE.PointLight(0xD4AF37, 2.5, 60); p1.position.set(15, 15, 15);
             const p2 = new THREE.PointLight(0x3b82f6, 2, 60); p2.position.set(-15, -15, 15);
             scene.add(p1, p2);
@@ -314,8 +410,6 @@
             const chromeMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 1, roughness: 0.02 });
             const blackMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.6, roughness: 0.3 });
 
-            // Assets Creation (High Quality)
-            // Comb
             const comb = new THREE.Group();
             const back = new THREE.Mesh(new THREE.BoxGeometry(0.2, 6.5, 0.5), blackMat);
             comb.add(back);
@@ -325,7 +419,6 @@
                 comb.add(t);
             }
             
-            // Scissors
             const scissors = new THREE.Group();
             const blade1 = new THREE.Mesh(new THREE.BoxGeometry(0.12, 5.5, 0.2), chromeMat); blade1.rotation.z = 0.25;
             const blade2 = new THREE.Mesh(new THREE.BoxGeometry(0.12, 5.5, 0.2), chromeMat); blade2.rotation.z = -0.25;
@@ -333,14 +426,12 @@
             const ring2 = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.12, 12, 32), goldMat); ring2.position.set(1, -2.8, 0);
             scissors.add(blade1, blade2, ring1, ring2);
 
-            // Razor
             const razor = new THREE.Group();
             const handle = new THREE.Mesh(new THREE.BoxGeometry(0.5, 5, 0.25), goldMat);
             const blade = new THREE.Mesh(new THREE.BoxGeometry(0.35, 4.2, 0.06), chromeMat);
             blade.position.set(0.9, 2, 0); blade.rotation.z = -0.6;
             razor.add(handle, blade);
 
-            // Responsive Starting Positions
             if(window.innerWidth < 768) {
                 comb.position.set(6, 6, -10);
                 scissors.position.set(-6, -6, -15);
@@ -354,7 +445,6 @@
             tools = [comb, scissors, razor];
             tools.forEach(t => scene.add(t));
 
-            // Luxury Dust Particles
             const pGeo = new THREE.BufferGeometry();
             const pPos = [];
             for(let i=0; i<500; i++) pPos.push((Math.random()-0.5)*100, (Math.random()-0.5)*100, (Math.random()-0.5)*100);
@@ -366,32 +456,27 @@
         function animate() {
             requestAnimationFrame(animate);
             const time = Date.now() * 0.0008;
-            
             tools.forEach((t, i) => {
                 t.rotation.y += 0.006 + (i * 0.003);
                 t.rotation.x += 0.004;
                 t.position.y += Math.sin(time + i) * 0.008;
             });
-            
             renderer.render(scene, camera);
         }
 
-        // --- INTERACTIVITY ENGINE ---
         function initGSAP() {
             gsap.registerPlugin(ScrollTrigger);
+            lucide.createIcons();
 
-            // Loader dismiss
             setTimeout(() => {
                 const loader = document.getElementById('loader');
                 loader.style.opacity = '0';
                 setTimeout(() => loader.remove(), 600);
             }, 1200);
 
-            // Hero Animation
             gsap.from(".reveal-hero", { opacity: 0, x: -80, duration: 1.8, ease: "power4.out" });
             gsap.from(".reveal-sub", { opacity: 0, y: 50, duration: 1.2, delay: 0.5, stagger: 0.25, ease: "power3.out" });
 
-            // Tools Scroll Flow
             tools.forEach((t, i) => {
                 const xEnd = window.innerWidth < 768 ? (i % 2 === 0 ? 6 : -6) : (i % 2 === 0 ? -15 : 15);
                 gsap.to(t.position, {
@@ -407,7 +492,6 @@
                 });
             });
 
-            // Style Selector Interactive
             const options = document.querySelectorAll('.sizer-option');
             const preview = document.getElementById('style-preview');
             const nameEl = document.getElementById('current-name');
@@ -416,7 +500,6 @@
                 opt.addEventListener('click', () => {
                     options.forEach(o => o.classList.remove('active'));
                     opt.classList.add('active');
-                    
                     const img = opt.dataset.img;
                     const name = opt.dataset.size;
 
@@ -435,12 +518,7 @@
             });
         }
 
-        window.onload = () => {
-            init3D();
-            animate();
-            initGSAP();
-        };
-
+        window.onload = () => { init3D(); animate(); initGSAP(); };
         window.onresize = () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.position.z = window.innerWidth < 768 ? 16 : 14;
